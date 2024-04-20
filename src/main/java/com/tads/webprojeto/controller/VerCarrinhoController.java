@@ -1,75 +1,124 @@
 package com.tads.webprojeto.controller;
 
+import com.tads.webprojeto.aplicacao.CarrinhoStorage;
 import com.tads.webprojeto.aplicacao.Produto;
 import com.tads.webprojeto.dominio.ProdutoDAO;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-
-import jakarta.servlet.http.Cookie;
-import com.tads.webprojeto.CarrinhoStorage;
-
 @Controller
 public class VerCarrinhoController {
-    
-    @RequestMapping(value = "/verCarrinho", method = RequestMethod.GET)
+
+    @GetMapping(value = "/verCarrinho")
     public void verCarrinho(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        
+
         var writer = response.getWriter();
         Cookie[] cookies = request.getCookies();
         String valorCookie = "";
-        Boolean vazio = true;
+        boolean vazio = true;
+        double total = 0;
 
-        if(cookies != null){
-            for(Cookie cookie : cookies){
-                if(cookie.getName().equals(CarrinhoStorage.cookieCarrinho)){
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals(CarrinhoStorage.cookieCarrinho)) {
                     valorCookie = cookie.getValue();
                     vazio = false;
                     break;
                 }
             }
         }
-
-        if(vazio){
-            writer.println("<html><body><h1>Carrinho Vazio</h1><br><button onclick=\"window.location.href='homeCliente.html'\">Voltar para Home</button><body></html>");
+        if (vazio) {
+            response.sendRedirect("/listaProdutos?msg=Carrinho vazio");
             return;
         }
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("<html><body><table border='1'><tr><th>ID do Produto</th><th>Nome</th><th>Preco</th><th>Quantidade</th><th>Add</th><th>Remover</th></tr>");
+        writer.println("<html><head><title>Seu carrinho:</title><style>" +
+                "table { border-collapse: collapse; width: 80%; margin: 20px auto; }" + 
+                "th, td { border: 1px solid black; padding: 8px; text-align: left; }" +
+                "th { background-color: #f2f2f2; }" +
+                "button { margin: 10px; padding: 8px 16px; font-size: 14px; }" +
+                "</style></head><body>" +
+                "<h2 style=\"text-align: center;\">Carrinho</h2>" +
+                "<table>" +
+                "<tr>" +
+                "<th>Nome</th>" +
+                "<th>Preço</th>" +
+                "<th>Quantidade</th>" +
+                "<th>Remover</th>" +
+                "</tr>");
 
-        Map<Integer, Integer> contagemIds = new HashMap<>(); // usando o Map para contar os ids repetidos que estão no cookie
+        Map<Integer, Integer> contagemIds = new HashMap<>();
         String[] ids = valorCookie.split("_");
-        for(String id : ids){
+        for (String id : ids) {
             int intId = Integer.parseInt(id);
-            contagemIds.put(intId, contagemIds.getOrDefault(intId, 0) + 1); // deixando os ids sem repetir nenhum
+
+            contagemIds.put(intId, contagemIds.getOrDefault(intId, 0) + 1);
         }
 
-        for(Map.Entry<Integer, Integer> entry : contagemIds.entrySet()){
+        /*for (Map.Entry<Integer, Integer> entry : contagemIds.entrySet()) {
             int id = entry.getKey();
             int quantidadeRepetida = entry.getValue();
+
             Produto p;
-            ProdutoDAO pDao = new ProdutoDAO();
-            p = pDao.buscarPorId(id);
-            int estoque = pDao.buscarQuantidade(id);
-            if(quantidadeRepetida == estoque){
-                // não deixa adicionar caso esteja no máximo do estoque
-                sb.append("<tr><td>").append(String.valueOf(p.getId())).append("</td><td>").append(p.getNome()).append("</td><td>").append(String.valueOf(p.getPreco())).append("</td><td>").append(String.valueOf(quantidadeRepetida)).append("</td><td>Maximo de estoque</td><td>").append("<a href='/carrinhoServletFromVerCarrinho?id=").append(String.valueOf(p.getId())).append("&comando=remove'>Remover</a></td></tr>"); 
-            }else {
-                sb.append("<tr><td>").append(String.valueOf(p.getId())).append("</td><td>").append(p.getNome()).append("</td><td>").append(String.valueOf(p.getPreco())).append("</td><td>").append(String.valueOf(quantidadeRepetida)).append("</td><td>").append("<a href='/carrinhoServletFromVerCarrinho?id=").append(String.valueOf(p.getId())).append("&comando=add'>Adicionar</a></td><td>").append("<a href='/carrinhoServletFromVerCarrinho?id=").append(String.valueOf(p.getId())).append("&comando=remove'>Remover</a></td></tr>"); 
+            ProdutoDAO pDAO = new ProdutoDAO();
+            p = pDAO.buscarProdutoPorId(id);
+            total += p.getPreco() * quantidadeRepetida;
+            int estoque = pDAO.buscarQuantidade(id);
+            writer.println("<tr><td>" + p.getNome() + "</td><td>R$ " + p.getPreco() + "</td><td>");
+
+            if (quantidadeRepetida == estoque) {
+                writer.println( + quantidadeRepetida +
+                        "<td><a href='/gerenciarCarrinhoFromVerCarrinho?id=" + p.getId()
+                        + "&comando=remove'>Remover</a></td></tr>");
+            } else {
+                writer.println(+ quantidadeRepetida + "</td>" +
+                        "<td><a href='/gerenciarCarrinhoFromVerCarrinho?id=" + p.getId() + "&comando=remove'>Remover</a></td></tr>");
             }
-            
+
             CarrinhoStorage.idsCarrinho.add(p.getId());
             CarrinhoStorage.quantidadeProdutosCarrinho.add(quantidadeRepetida);
+        }*/
+
+        for (Map.Entry<Integer, Integer> entry : contagemIds.entrySet()) {
+            int id = entry.getKey();
+            int quantidadeRepetida = entry.getValue();
+        
+            ProdutoDAO pDAO = new ProdutoDAO();
+            Produto p = pDAO.buscarProdutoPorId(id);
+            
+            if (p != null) {
+                total += p.getPreco() * quantidadeRepetida;
+                writer.println("<tr><td>" + p.getNome() + "</td><td>R$ " + p.getPreco() + "</td><td>");
+        
+                int estoque = pDAO.buscarQuantidade(id);
+                if (quantidadeRepetida == estoque) {
+                    writer.println(quantidadeRepetida +
+                            "<td><a href='/gerenciarCarrinhoFromVerCarrinho?id=" + p.getId()
+                            + "&comando=remove'>Remover</a></td></tr>");
+                } else {
+                    writer.println(quantidadeRepetida + "</td>" +
+                            "<td><a href='/gerenciarCarrinhoFromVerCarrinho?id=" + p.getId() + "&comando=remove'>Remover</a></td></tr>");
+                }
+        
+                CarrinhoStorage.idsCarrinho.add(p.getId());
+                CarrinhoStorage.quantidadeProdutosCarrinho.add(quantidadeRepetida);
+            } 
         }
 
-        sb.append("</table><br><button onclick=\"window.location.href='homeCliente.html'\">Voltar para Home</button><br><button onclick=\"window.location.href='/finalizarCompra'\">Finalizar Compra</button></body></html>");
-        writer.println(sb.toString());
+        writer.println("</table>");
+        writer.println("<div style=\"text-align: center;\">");
+        writer.println("<button onclick=\"window.location.href='/listaProdutos'\">Acessar produtos novamente</button>");
+        writer.println("<button onclick=\"window.location.href='/finalizarCompra'\">Finalizar sua compra</button>");
+        writer.println("<button onclick=\"window.location.href='homeCliente.html'\">Ir para a Homepage</button>");
+        writer.println("</div>");
+        writer.println("<h3 style=\"text-align: center;\">Total a ser pago: R$ " + total + "</h3>");
+        writer.println("</body></html>");
     }
 }

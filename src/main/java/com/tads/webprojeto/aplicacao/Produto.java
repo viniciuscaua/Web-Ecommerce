@@ -73,10 +73,9 @@ public class Produto {
         this.descricao = descricao;
     }
 
-    /*
-     * public Produto getProdutoPorId(int id) {
-     * ProdutoDAO produtoDAO = new ProdutoDAO();
-     * return produtoDAO.getProdutoPorId(id);
-     * }
-     */
+   // public Produto buscarProdutoPorId(int id) {
+        //ProdutoDAO produtoDAO = new ProdutoDAO();
+        //return produtoDAO.buscarProdutoPorId(id);
+   // }
+
 }

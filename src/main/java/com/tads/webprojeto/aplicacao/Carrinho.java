@@ -1,4 +1,4 @@
-package com.tads.webprojeto.aplicacao;
+/*package com.tads.webprojeto.aplicacao;
 
 import java.util.ArrayList;
 
@@ -8,6 +8,10 @@ public class Carrinho {
     public Carrinho(ArrayList<Produto> produtos) {
         super();
         this.produtos = produtos;
+    }
+
+    public Carrinho() {
+
     }
 
     public ArrayList<Produto> getProdutos() {
@@ -36,4 +40,5 @@ public class Carrinho {
     public void addProduto(Produto p) {
         produtos.add(p);
     }
-}
+
+}*/

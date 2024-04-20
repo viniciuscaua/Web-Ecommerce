@@ -149,6 +149,60 @@ public class ProdutoDAO {
         return produto;
     }
 
+     /*public Produto buscarProdutoPorId(int id) {
+        Produto produto = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+    
+        try {
+            String sql = "SELECT * FROM produtos WHERE id = ?";
+            ps = conexao.prepareStatement(sql);
+            ps.setInt(1, id);
+            rs = ps.executeQuery();
+    
+            if (rs.next()) {
+                produto = new Produto(
+                    rs.getInt("id"), 
+                    rs.getString("nome"), 
+                    rs.getFloat("preco"), 
+                    rs.getInt("quantidade"), 
+                    rs.getString("descricao")
+                );
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            closeResources(ps, rs);
+        }
+    
+        return produto;
+    }*/
+
+    public Produto buscarProdutoPorId(int id) {
+        Produto produto = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+    
+        try {
+            String sql = "SELECT * FROM produtos WHERE id = ?";
+            ps = conexao.prepareStatement(sql);
+            ps.setInt(1, id);
+            rs = ps.executeQuery();
+    
+            if (rs.next()) {
+                produto = new Produto(rs.getInt("id"), rs.getString("nome"), rs.getFloat("preco"), rs.getInt("quantidade"), rs.getString("descricao"));
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            closeResources(ps, rs);
+        }
+    
+        return produto;
+    }
+    
+    
+
     public int buscarQuantidade(int id) {
         int quantidade = 0;
         PreparedStatement ps = null;
@@ -186,6 +240,24 @@ public class ProdutoDAO {
         } finally {
             closeResources(ps);
         }
+    }
+
+    public double getPreco(int idProduto) {
+        String SQL_BUSCAR_PRECO = "SELECT preco FROM \"produtos\" WHERE id = ?";
+        double preco = 0;
+
+        try (Connection conn = Conexao.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(SQL_BUSCAR_PRECO)) {
+            stmt.setInt(1, idProduto);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    preco = rs.getDouble("preco");
+                }
+            }
+        } catch (SQLException | URISyntaxException e) {
+            e.printStackTrace();
+        }
+        return preco;
     }
 
     // Adicione outros métodos conforme necessário

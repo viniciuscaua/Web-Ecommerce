@@ -1,5 +1,6 @@
 package com.tads.webprojeto.controller;
 
+import com.tads.webprojeto.aplicacao.CarrinhoStorage;
 import com.tads.webprojeto.aplicacao.Cliente;
 import com.tads.webprojeto.aplicacao.Lojista;
 import com.tads.webprojeto.dominio.ClienteDAO;
@@ -13,6 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
+
 @Controller
 public class LoginController {
 
@@ -35,8 +37,11 @@ public class LoginController {
 
             if (cliente != null) {
                 session.setAttribute("clienteLogado", true);
+
                 email = email.replace(String.valueOf(remover), "");
+                CarrinhoStorage.cookieCarrinho = email;
                 response.sendRedirect("homeCliente.html");
+
             } else {
                 session.setAttribute("lojistaLogado", true);
                 response.sendRedirect("/homeLojista.html");

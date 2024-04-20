@@ -15,7 +15,7 @@ import java.text.DecimalFormat;
 @Controller
 public class ClienteController {
 
-    @RequestMapping(value = "/listarProdutosCliente", method = RequestMethod.GET)
+    @RequestMapping(value = "/listaProdutos", method = RequestMethod.GET)
     public void getAllProdutosCliente(HttpServletRequest request, HttpServletResponse response) throws IOException {
         ProdutoDAO produtoDAO = new ProdutoDAO();
         List<Produto> produtos = produtoDAO.listarProdutos();
@@ -24,8 +24,9 @@ public class ClienteController {
         var writer = response.getWriter();
         writer.println("<html> <head> <title> Lista de Produtos </title> <style>" +
                 "table { border-collapse: collapse; width: 80%; margin: 0 auto; }" + 
-                "th, td { border: 1px solid black;}" +
-                "th" + "button { margin-top: 20px; margin-left: 10px}" +
+                "th, td { border: 1px solid black; padding: 8px; text-align: left;}" +
+                "th { background-color: #f2f2f2; }" +
+                "button { margin-top: 20px; margin-left: 10px; padding: 10px 20px; font-size: 16px; }" +
                 "</style></head> <body> <h2 style=\"text-align: center;\">Lista de Produtos</h2> <table>");
 
         writer.println("<tr>");
@@ -48,9 +49,7 @@ public class ClienteController {
             } else {
                 writer.println("<td>" + produto.getQuantidade() + "</td>");
             }
-            writer.println("<td><a href='/carrinhoServlet?id=" + produto.getId() + "&comando=add'>Adicionar</a></td>");
-
-            //writer.println("<td><a href='carrinhoServlet/id=" + produto.getId() + "/comando=add' title='http://localhost:8080/carrinhoServlet?id=" + produto.getId() + "?comando=add'>Adicionar</a></td>");
+            writer.println("<td><a href='/gerenciarCarrinho?id=" + produto.getId() + "&comando=add'>Adicionar</a></td>");
             writer.println("</tr>");
         }
 

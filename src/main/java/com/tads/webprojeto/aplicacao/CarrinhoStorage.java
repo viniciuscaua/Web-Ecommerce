@@ -1,9 +1,9 @@
-package com.tads.webprojeto;
+package com.tads.webprojeto.aplicacao;
 
 import java.util.ArrayList;
 
 public class CarrinhoStorage {
-     public static String cookieCarrinho;; //nome do cookie
+     public static String cookieCarrinho = "nome_do_cookie"; //nome do cookie
      public static ArrayList<Integer> idsCarrinho = new ArrayList<>(); //id's dos produtos
      public static ArrayList<Integer> quantidadeProdutosCarrinho = new ArrayList<>(); // quantidade de produtos 
 }
