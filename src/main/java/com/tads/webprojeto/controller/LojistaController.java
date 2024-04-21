@@ -19,7 +19,7 @@ public class LojistaController {
 
                 // Buscar os produtos do ProdutoDAO
                 ProdutoDAO produtoDAO = new ProdutoDAO();
-                List<Produto> produtos = produtoDAO.buscarTodos();
+                List<Produto> produtos = produtoDAO.listarProdutos();
 
                 // Escrevendo a resposta
                 response.setContentType("text/html;charset=UTF-8");
@@ -113,7 +113,7 @@ public class LojistaController {
                 int idProduto = Integer.parseInt(request.getParameter("id"));
 
                 ProdutoDAO produtoDAO = new ProdutoDAO();
-                Produto produto = produtoDAO.buscarPorId(idProduto);
+                Produto produto = produtoDAO.buscarProdutoPorId(idProduto);
 
                 response.setContentType("text/html;charset=UTF-8");
                 response.getWriter().println(

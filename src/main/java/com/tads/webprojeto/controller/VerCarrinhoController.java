@@ -97,7 +97,7 @@ public class VerCarrinhoController {
                 total += p.getPreco() * quantidadeRepetida;
                 writer.println("<tr><td>" + p.getNome() + "</td><td>R$ " + p.getPreco() + "</td><td>");
         
-                int estoque = pDAO.buscarQuantidade(id);
+                int estoque = pDAO.buscarEstoque(id);
                 if (quantidadeRepetida == estoque) {
                     writer.println(quantidadeRepetida +
                             "<td><a href='/gerenciarCarrinhoFromVerCarrinho?id=" + p.getId()

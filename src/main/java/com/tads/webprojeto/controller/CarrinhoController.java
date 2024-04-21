@@ -23,7 +23,7 @@ public class CarrinhoController {
 
         if (comando.equals("add")) {
             ProdutoDAO pDAO = new ProdutoDAO();
-            int quantidade = pDAO.buscarQuantidade(Integer.parseInt(idProduto));
+            int quantidade = pDAO.buscarEstoque(Integer.parseInt(idProduto));
 
             if (quantidade == 0) {
                 response.sendRedirect("/listaProdutos?msg=Produto sem estoque");
@@ -93,7 +93,7 @@ public class CarrinhoController {
 
         if (comando.equals("add")) {
             ProdutoDAO pDAO = new ProdutoDAO();
-            int quantidade = pDAO.buscarQuantidade(Integer.parseInt(idProduto));
+            int quantidade = pDAO.buscarEstoque(Integer.parseInt(idProduto));
             // Percorre os cookies existentes
             Cookie[] cookies = request.getCookies();
             if (cookies != null) {
@@ -159,10 +159,10 @@ public class CarrinhoController {
         int novaQuantidade;
 
         for (int i = 0; i < arrayIds.size(); i++) {
-            quantidade = pDAO.buscarQuantidade(arrayIds.get(i));
+            quantidade = pDAO.buscarEstoque(arrayIds.get(i));
             novaQuantidade = quantidade - arrayQuantidades.get(i);
 
-            pDAO.updateQuantidade(arrayIds.get(i), novaQuantidade);
+            pDAO.updateEstoque(arrayIds.get(i), novaQuantidade);
         }
 
         // Apagando o cookie do carrinho

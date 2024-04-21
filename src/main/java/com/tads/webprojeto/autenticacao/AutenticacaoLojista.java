@@ -9,7 +9,7 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 //Filtrando as páginas que o lojista não pode acessar
-@WebFilter(urlPatterns = { "/homeCliente.html" })
+@WebFilter(urlPatterns = { "/homeCliente.html", "/verCarrinho" })
 public class AutenticacaoLojista implements Filter {
 
     @Override
